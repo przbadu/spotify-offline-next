@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { SpotifyTrack } from "@/app/types";
+import { SpotifyTrack, SpotifyPlaylist } from "@/app/types";
 import useTracks from "@/app/hooks/useTracks";
 import { useAuthStore, selectIsAuthenticated } from "@/app/store/authStore";
 import MusicPlayer from "@/app/components/MusicPlayer";
@@ -18,13 +18,13 @@ export default function PlaylistPage() {
   const router = useRouter();
   const params = useParams();
   const playlistId = params.id as string;
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { accessToken, refreshToken } = useAuthStore();
   const isAuthenticated = selectIsAuthenticated(useAuthStore.getState());
 
   const [currentTrack, setCurrentTrack] = useState<SpotifyTrack | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
-  const [playlistDetails, setPlaylistDetails] = useState<any>(null);
+  const [playlistDetails, setPlaylistDetails] = useState<SpotifyPlaylist | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(true);
 
   const { tracks, isLoading, error, isOffline, downloadTrack } = useTracks(playlistId);
@@ -47,7 +47,7 @@ export default function PlaylistPage() {
       try {
         const spotifyApi = createSpotifyApi(accessToken, refreshToken || undefined);
         const response = await spotifyApi.getPlaylist(playlistId);
-        setPlaylistDetails(response.body);
+        setPlaylistDetails(response.body as unknown as SpotifyPlaylist);
       } catch (err) {
         console.error("Error fetching playlist details:", err);
       } finally {

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useAuthStore } from "@/app/store/authStore";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Music } from "lucide-react";
 
 export default function LoginPage() {
@@ -17,12 +16,22 @@ export default function LoginPage() {
   // Handle successful authentication
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      const { accessToken, refreshToken, expiresAt } = session.user as any;
+      const { accessToken, refreshToken, expiresAt } = session.user as { accessToken: string; refreshToken: string; expiresAt: number };
 
       if (accessToken && refreshToken && expiresAt) {
+        // Map session user to SpotifyUser
+        const spotifyUser = {
+          id: session.user.email?.split('@')[0] || 'unknown',
+          display_name: session.user.name || 'Unknown User',
+          email: session.user.email || 'unknown@example.com',
+          images: session.user.image ? [{ url: session.user.image }] : [],
+          country: 'unknown',
+          product: 'premium'
+        };
+        
         // Store auth data in zustand store
         login(
-          session?.user,
+          spotifyUser,
           accessToken,
           refreshToken,
           (expiresAt - Math.floor(Date.now() / 1000))
@@ -66,7 +75,7 @@ export default function LoginPage() {
         </Button>
 
         <div className="text-center text-xs text-muted-foreground">
-          <p>You'll need a Spotify Premium account</p>
+          <p>You&apos;ll need a Spotify Premium account</p>
           <p>to use all features of this application.</p>
         </div>
       </div>

@@ -11,7 +11,7 @@ import { Wifi, WifiOff, Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { playlists, isLoading, error, isOffline } = usePlaylists();
   const isAuthenticated = selectIsAuthenticated(useAuthStore.getState());
 

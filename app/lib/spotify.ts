@@ -77,15 +77,15 @@ export const setupIndexedDB = () => {
 
     const request = indexedDB.open("OfflineSpotify", 1);
 
-    request.onerror = (event) => {
+    request.onerror = () => {
       reject("Error opening IndexedDB");
     };
 
-    request.onsuccess = (event) => {
+    request.onsuccess = () => {
       resolve(request.result);
     };
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
       const db = request.result;
 
       // Create object stores for tracks, playlists and user data
@@ -107,7 +107,7 @@ export const setupIndexedDB = () => {
 
 // Function to save a track to IndexedDB
 export const saveTrackToIndexedDB = async (
-  track: any,
+  track: Record<string, unknown>,
   audioBlob: Blob
 ): Promise<void> => {
   const db = await setupIndexedDB();
@@ -131,7 +131,7 @@ export const saveTrackToIndexedDB = async (
 };
 
 // Function to get a track from IndexedDB
-export const getTrackFromIndexedDB = async (trackId: string): Promise<any> => {
+export const getTrackFromIndexedDB = async (trackId: string): Promise<Record<string, unknown> | null> => {
   const db = await setupIndexedDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(["tracks"], "readonly");
@@ -158,7 +158,7 @@ export const getTrackFromIndexedDB = async (trackId: string): Promise<any> => {
 };
 
 // Function to save a playlist to IndexedDB
-export const savePlaylistToIndexedDB = async (playlist: any): Promise<void> => {
+export const savePlaylistToIndexedDB = async (playlist: Record<string, unknown>): Promise<void> => {
   const db = await setupIndexedDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(["playlists"], "readwrite");
@@ -178,6 +178,7 @@ export const savePlaylistToIndexedDB = async (playlist: any): Promise<void> => {
 };
 
 // Function to get all playlists from IndexedDB
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getAllPlaylistsFromIndexedDB = async (): Promise<any[]> => {
   const db = await setupIndexedDB();
   return new Promise((resolve, reject) => {

@@ -39,7 +39,7 @@ export const usePlaylists = () => {
         // If offline, get data from IndexedDB
         if (isOffline) {
           const offlinePlaylists = await getAllPlaylistsFromIndexedDB();
-          setPlaylists(offlinePlaylists || []);
+          setPlaylists(offlinePlaylists as SpotifyPlaylist[] || []);
           setIsLoading(false);
           return;
         }
@@ -52,7 +52,8 @@ export const usePlaylists = () => {
         const spotifyApi = createSpotifyApi(accessToken, refreshToken || undefined);
         const response = await spotifyApi.getUserPlaylists({ limit: 50 });
 
-        const fetchedPlaylists: SpotifyPlaylist[] = response.body.items.map(item => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fetchedPlaylists: SpotifyPlaylist[] = response.body.items.map((item: Record<string, any>) => ({
           id: item.id,
           name: item.name,
           description: item.description || '',
@@ -82,7 +83,7 @@ export const usePlaylists = () => {
         try {
           const offlinePlaylists = await getAllPlaylistsFromIndexedDB();
           if (offlinePlaylists && offlinePlaylists.length > 0) {
-            setPlaylists(offlinePlaylists);
+            setPlaylists(offlinePlaylists as SpotifyPlaylist[]);
             setError('Using cached playlists - some data may be outdated');
           }
         } catch (offlineErr) {

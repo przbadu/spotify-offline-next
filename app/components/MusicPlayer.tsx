@@ -43,7 +43,7 @@ const MusicPlayer = ({
         try {
           await audioRef.current.play();
           setIsPlaying(true);
-        } catch (error) {
+        } catch {
           console.log("Auto-play prevented by browser");
         }
       }

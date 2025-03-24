@@ -16,7 +16,7 @@ const scopes = [
   "streaming",
 ].join(',');
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     SpotifyProvider({
       clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!,
